@@ -9,27 +9,27 @@ namespace rpg_characters
             // decrlaring base variables
 
             Mage mage = new Mage();
-            mage.LvLup();
-            mage.LvLup();
-            mage.LvLup();
+            mage.LevelUp();
+            mage.LevelUp();
+            mage.LevelUp();
             mage.showStats();
 
             Ranger ranger = new Ranger();
-            ranger.LvLup();
-            ranger.LvLup();
-            ranger.LvLup();
+            ranger.LevelUp();
+            ranger.LevelUp();
+            ranger.LevelUp();
             ranger.showStats();
 
             Rogue rogue = new Rogue();
-            rogue.LvLup();
-            rogue.LvLup();
-            rogue.LvLup();
+            rogue.LevelUp();
+            rogue.LevelUp();
+            rogue.LevelUp();
             rogue.showStats();
 
             Warrior warrior = new Warrior();
-            warrior.LvLup();
-            warrior.LvLup();
-            warrior.LvLup();
+            warrior.LevelUp();
+            warrior.LevelUp();
+            warrior.LevelUp();
             warrior.showStats();
             }
         }
@@ -40,12 +40,13 @@ namespace rpg_characters
 
         public Mage()
             {
+            characterclass = "Mage";
             strength = 1;
             dexterity = 1;
             intelligence = 8;
             }
 
-        public void LvLup()
+        public void LevelUp()
             {
             strength++;
             dexterity++;
@@ -71,12 +72,13 @@ namespace rpg_characters
 
         public Ranger()
             {
+            characterclass = "Ranger";
             strength = 1;
             dexterity = 7;
             intelligence = 1;
             }
 
-        public void LvLup()
+        public void LevelUp()
             {
             strength++;
             dexterity += 5;
@@ -102,12 +104,13 @@ namespace rpg_characters
 
         public Rogue()
             {
+            characterclass = "Rogue";
             strength = 2;
             dexterity = 6;
             intelligence = 1;
             }
 
-        public void LvLup()
+        public void LevelUp()
             {
             strength++;
             dexterity += 4;
@@ -133,12 +136,13 @@ namespace rpg_characters
 
         public Warrior()
             {
+            characterclass = "Warrior";
             strength = 5;
             dexterity = 2;
             intelligence = 1;
             }
 
-        public void LvLup()
+        public void LevelUp()
             {
             strength += 3;
             dexterity += 2;
@@ -163,12 +167,6 @@ namespace rpg_characters
         {
         protected string weaponTypes = "Staff, Wand";
         protected string armorTypes = "Cloth";
-        protected string characterclass = "Mage";
-
-        public void showStats()
-            {
-            Console.WriteLine( "Here are the values of your character's (" + characterclass + ") base attributes:\n\nStength: " + strength + "\n" + "Dexterity: " + dexterity + "\n" + "intelligence: " + intelligence + "\n" + "Level: " + level );
-            }
 
         // some other stuff
         }
@@ -177,12 +175,6 @@ namespace rpg_characters
         {
         protected string weaponTypes = "Bow";
         protected string armorTypes = "Leather, Mail";
-        protected string characterclass = "Ranger";
-
-        public void showStats()
-            {
-            Console.WriteLine( "Here are the values of your character's (" + characterclass + ") base attributes:\n\nStength: " + strength + "\n" + "Dexterity: " + dexterity + "\n" + "intelligence: " + intelligence + "\n" + "Level: " + level );
-            }
 
         // some other values
         }
@@ -191,12 +183,6 @@ namespace rpg_characters
         {
         protected string weaponTypes = "Dagger, Sword";
         protected string armorTypes = "Leather, Mail";
-        protected string characterclass = "Rogue";
-
-        public void showStats()
-            {
-            Console.WriteLine( "Here are the values of your character's (" + characterclass + ") base attributes:\n\nStength: " + strength + "\n" + "Dexterity: " + dexterity + "\n" + "intelligence: " + intelligence + "\n" + "Level: " + level );
-            }
 
         // some other values
         }
@@ -205,12 +191,6 @@ namespace rpg_characters
         {
         protected string weaponTypes = "Axe, Hammer, Sword";
         protected string armorTypes = "Mail, Plate";
-        protected string characterclass = "Warrior";
-
-        public void showStats()
-            {
-            Console.WriteLine( "Here are the values of your character's (" + characterclass + ") base attributes:\n\nStength: " + strength + "\n" + "Dexterity: " + dexterity + "\n" + "intelligence: " + intelligence + "\n" + "Level: " + level );
-            }
 
         // some other values
         }
@@ -222,8 +202,29 @@ namespace rpg_characters
         protected int level = 0;
         protected int strength = 0;
         protected double damage = 0;
-        protected int itemLevel = 0;
-        protected string weaponType = "";
-        protected bool weaponSlot = true;
+        protected string characterclass = "";
+
+        public void showStats()
+            {
+            Console.WriteLine( "Here are the values of your character's (" + characterclass + ") base attributes:\n\nStength: " + strength + "\nDexterity: " + dexterity + "\nintelligence: " + intelligence + "\nLevel: " + level );
+            }
+        }
+        enum Weapon
+        {
+        Axe,
+        Bow,
+        Dagger,
+        Hammer,
+        Staff,
+        Sword,
+        Wand
+        }
+
+        enum Armour
+        {
+        Cloth,
+        Leather,
+        Mail,
+        Plate
         }
     }
