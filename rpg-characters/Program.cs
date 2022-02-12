@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace rpg_characters
     {
@@ -44,6 +45,7 @@ namespace rpg_characters
             strength = 1;
             dexterity = 1;
             intelligence = 8;
+            Dictionary<string, string> SlotData = new Dictionary<string, string>(); 
             }
 
         public void LevelUp()
@@ -53,6 +55,11 @@ namespace rpg_characters
             intelligence += 5;
             level++;
             setDamage();
+            }
+
+        public void EquipItem(string itemName, int reqLvl, string itemSlot)
+            {
+
             }
 
         private void setDamage()
@@ -204,27 +211,27 @@ namespace rpg_characters
         protected double damage = 0;
         protected string characterclass = "";
 
+        public enum Slot
+            {
+            Head,
+            Body,
+            Legs,
+            Weapon
+            }
+
         public void showStats()
             {
             Console.WriteLine( "Here are the values of your character's (" + characterclass + ") base attributes:\n\nStength: " + strength + "\nDexterity: " + dexterity + "\nintelligence: " + intelligence + "\nLevel: " + level );
             }
         }
-        enum Weapon
+        public enum MageWeapon
         {
-        Axe,
-        Bow,
-        Dagger,
-        Hammer,
-        Staff,
-        Sword,
+        Staff,        
         Wand
         }
 
-        enum Armour
+        public enum MageArmour
         {
-        Cloth,
-        Leather,
-        Mail,
-        Plate
+        Cloth       
         }
     }
