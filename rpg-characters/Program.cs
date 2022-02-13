@@ -10,6 +10,7 @@ namespace rpg_characters
             // decrlaring base variables
 
             Mage mage = new Mage();
+           
             mage.LevelUp();
             mage.LevelUp();
             mage.LevelUp();
@@ -32,6 +33,18 @@ namespace rpg_characters
             warrior.LevelUp();
             warrior.LevelUp();
             warrior.showStats();
+
+            Weapon testAxe = new Weapon()
+                {
+                ItemName = "Common Axe",
+                RequiredLevel = 1,
+                ItemSlot = "Weapon",
+                WeaponType = "Axe",
+                Damage = 7,
+                AttackSpeed = 1.1
+                };
+
+            mage.EquipWeapon( testAxe );
             }
         }
 
@@ -39,14 +52,26 @@ namespace rpg_characters
         {
         public string name = ""; // Name must be accessible from outside
 
+        private static Dictionary<string, string> Slot = new Dictionary<string, string>();
+        private static Dictionary<string, string> AllowedWeaponType = new Dictionary<string, string>();
+
         public Mage()
             {
             characterclass = "Mage";
             strength = 1;
             dexterity = 1;
             intelligence = 8;
-            Dictionary<string, string> SlotData = new Dictionary<string, string>(); 
+            
+            Slot.Add( "Head", "" );
+            Slot.Add( "Body", "" );
+            Slot.Add( "Legs", "" );
+            Slot.Add( "Weapon", "" );
+
+            AllowedWeaponType.Add( "0", "Staff" );
+            AllowedWeaponType.Add( "1", "Wand" );            
             }
+
+            
 
         public void LevelUp()
             {
@@ -54,13 +79,24 @@ namespace rpg_characters
             dexterity++;
             intelligence += 5;
             level++;
+            damage = 1;
             setDamage();
             }
 
-        public void EquipItem(string itemName, int reqLvl, string itemSlot)
+        public void EquipWeapon( Weapon weapon ) 
             {
-
+            foreach( var weaponType in AllowedWeaponType )
+                {
+                if( weaponType.Value != weapon.WeaponType )
+                    {
+                        throw new InvalidWeaponException( "You are not allowed to wear this weapon!");
+                    }
+                } 
+            
+            
             }
+
+
 
         private void setDamage()
             {
@@ -112,9 +148,9 @@ namespace rpg_characters
         public Rogue()
             {
             characterclass = "Rogue";
-            strength = 2;
-            dexterity = 6;
-            intelligence = 1;
+            strength += 2;
+            dexterity += 6;
+            intelligence += 1;
             }
 
         public void LevelUp()
@@ -144,9 +180,9 @@ namespace rpg_characters
         public Warrior()
             {
             characterclass = "Warrior";
-            strength = 5;
-            dexterity = 2;
-            intelligence = 1;
+            strength += 5;
+            dexterity += 2;
+            intelligence += 1;
             }
 
         public void LevelUp()
@@ -202,7 +238,7 @@ namespace rpg_characters
         // some other values
         }
 
-    public abstract class BaseAttributes
+    public class BaseAttributes : Weapon
         {
         protected int dexterity = 0;
         protected int intelligence = 0;
@@ -210,28 +246,49 @@ namespace rpg_characters
         protected int strength = 0;
         protected double damage = 0;
         protected string characterclass = "";
+        
 
-        public enum Slot
-            {
-            Head,
-            Body,
-            Legs,
-            Weapon
-            }
+        //public Slot mySlot { get; set; }
+
+        
+
+        
 
         public void showStats()
             {
             Console.WriteLine( "Here are the values of your character's (" + characterclass + ") base attributes:\n\nStength: " + strength + "\nDexterity: " + dexterity + "\nintelligence: " + intelligence + "\nLevel: " + level );
             }
         }
-        public enum MageWeapon
+
+    public class Weapon
         {
-        Staff,        
-        Wand
+        public string ItemName { get; set; }
+        public int RequiredLevel { get; set; }
+        public string ItemSlot { get; set; }
+        public string WeaponType { get; set; }
+
+        public double Damage { get; set; }
+        public double AttackSpeed { get; set; }        
         }
 
-        public enum MageArmour
+    public enum SLOT_WEAPON
         {
-        Cloth       
+        HEAD,
+        BODY,
+        LEGS,
+        WEAPON
         }
+
+    public enum WeaponType
+        {
+        WEAPON_AXE,
+        WEAPON_BOW,
+        WEAPON_DAGGER,
+        WEAPON_HAMMER,
+        WEAPON_STAFF,
+        WEAPON_SWORD,
+        WEAPON_WAND,
+        }
+
+   
     }
