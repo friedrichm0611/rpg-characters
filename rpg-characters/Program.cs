@@ -10,7 +10,7 @@ namespace rpg_characters
             // decrlaring base variables
 
             Mage mage = new Mage();
-           
+
             mage.LevelUp();
             mage.LevelUp();
             mage.LevelUp();
@@ -45,6 +45,8 @@ namespace rpg_characters
                 };
 
             mage.EquipWeapon( testAxe );
+
+            Console.ReadLine();
             }
         }
 
@@ -53,7 +55,7 @@ namespace rpg_characters
         public string name = ""; // Name must be accessible from outside
 
         private static Dictionary<string, string> Slot = new Dictionary<string, string>();
-        private static Dictionary<string, string> AllowedWeaponType = new Dictionary<string, string>();
+        private static Dictionary<int, string> AllowedWeaponType = new Dictionary<int, string>();
 
         public Mage()
             {
@@ -61,17 +63,15 @@ namespace rpg_characters
             strength = 1;
             dexterity = 1;
             intelligence = 8;
-            
+
             Slot.Add( "Head", "" );
             Slot.Add( "Body", "" );
             Slot.Add( "Legs", "" );
             Slot.Add( "Weapon", "" );
 
-            AllowedWeaponType.Add( "0", "Staff" );
-            AllowedWeaponType.Add( "1", "Wand" );            
+            AllowedWeaponType.Add( 0, "Staff" );
+            AllowedWeaponType.Add( 1, "Wand" );
             }
-
-            
 
         public void LevelUp()
             {
@@ -83,26 +83,31 @@ namespace rpg_characters
             setDamage();
             }
 
-        public void EquipWeapon( Weapon weapon ) 
+        public void EquipWeapon( Weapon weapon )
             {
-            foreach( var weaponType in AllowedWeaponType )
+            bool found = false;
+            string typeOfWapon = weapon.WeaponType;
+            for ( int i = 0; i < AllowedWeaponType.Count; i++ )
                 {
-                if( weaponType.Value != weapon.WeaponType )
+                if ( AllowedWeaponType[i] == typeOfWapon )
                     {
-                        throw new InvalidWeaponException( "You are not allowed to wear this weapon!");
+                    Console.WriteLine( "You are allowed to wear this weapon!" );
+                    found = true;
+                    break;
                     }
-                } 
-            
-            
+                }
+            if ( found == false ) throw new InvalidWeaponException();
             }
+        
 
+    //Console.WriteLine( "You are allowed!" );
+    
 
-
-        private void setDamage()
-            {
-            damage += ( intelligence / 100 * 1 );
-            // depending on amour, weapon and
-            }
+private void setDamage()
+    {
+    damage += ( intelligence / 100 * 1 );
+    // depending on amour, weapon and
+    }
 
         // equip with weapon
 
@@ -110,185 +115,178 @@ namespace rpg_characters
         }
 
     public class Ranger : BaseRanger
+    {
+    public string name = ""; // Name must be accessible from outside
+
+    public Ranger()
         {
-        public string name = ""; // Name must be accessible from outside
-
-        public Ranger()
-            {
-            characterclass = "Ranger";
-            strength = 1;
-            dexterity = 7;
-            intelligence = 1;
-            }
-
-        public void LevelUp()
-            {
-            strength++;
-            dexterity += 5;
-            intelligence++;
-            level++;
-            setDamage();
-            }
-
-        private void setDamage()
-            {
-            damage += ( intelligence / 100 * 1 );
-            // depending on amour, weapon and
-            }
-
-        // equip with weapon
-
-        // equip with amour (head, body, feet)
+        characterclass = "Ranger";
+        strength = 1;
+        dexterity = 7;
+        intelligence = 1;
         }
 
-    public class Rogue : BaseRogue
+    public void LevelUp()
         {
-        public string name = ""; // Name must be accessible from outside
-
-        public Rogue()
-            {
-            characterclass = "Rogue";
-            strength += 2;
-            dexterity += 6;
-            intelligence += 1;
-            }
-
-        public void LevelUp()
-            {
-            strength++;
-            dexterity += 4;
-            intelligence++;
-            level++;
-            setDamage();
-            }
-
-        private void setDamage()
-            {
-            damage += ( intelligence / 100 * 1 );
-            // depending on amour, weapon and
-            }
-
-        // equip with weapon
-
-        // equip with amour (head, body, feet)
+        strength++;
+        dexterity += 5;
+        intelligence++;
+        level++;
+        setDamage();
         }
 
-    public class Warrior : BaseWarrior
+    private void setDamage()
         {
-        public string name = ""; // Name must be accessible from outside
-
-        public Warrior()
-            {
-            characterclass = "Warrior";
-            strength += 5;
-            dexterity += 2;
-            intelligence += 1;
-            }
-
-        public void LevelUp()
-            {
-            strength += 3;
-            dexterity += 2;
-            intelligence++;
-            level++;
-            setDamage();
-            }
-
-        private void setDamage()
-            {
-            damage += ( intelligence / 100 * 1 );
-            // depending on amour, weapon and
-            }
-
-        // equip with weapon
-
-        // equip with amour (head, body, feet)
+        damage += ( intelligence / 100 * 1 );
+        // depending on amour, weapon and
         }
 
-    // defining base classes with individual combat values aso.
-    public abstract class BaseMage : BaseAttributes
-        {
-        protected string weaponTypes = "Staff, Wand";
-        protected string armorTypes = "Cloth";
+    // equip with weapon
 
-        // some other stuff
+    // equip with amour (head, body, feet)
+    }
+
+public class Rogue : BaseRogue
+    {
+    public string name = ""; // Name must be accessible from outside
+
+    public Rogue()
+        {
+        characterclass = "Rogue";
+        strength += 2;
+        dexterity += 6;
+        intelligence += 1;
         }
 
-    public abstract class BaseRanger : BaseAttributes
+    public void LevelUp()
         {
-        protected string weaponTypes = "Bow";
-        protected string armorTypes = "Leather, Mail";
-
-        // some other values
+        strength++;
+        dexterity += 4;
+        intelligence++;
+        level++;
+        setDamage();
         }
 
-    public abstract class BaseRogue : BaseAttributes
+    private void setDamage()
         {
-        protected string weaponTypes = "Dagger, Sword";
-        protected string armorTypes = "Leather, Mail";
-
-        // some other values
+        damage += ( intelligence / 100 * 1 );
+        // depending on amour, weapon and
         }
 
-    public abstract class BaseWarrior : BaseAttributes
-        {
-        protected string weaponTypes = "Axe, Hammer, Sword";
-        protected string armorTypes = "Mail, Plate";
+    // equip with weapon
 
-        // some other values
+    // equip with amour (head, body, feet)
+    }
+
+public class Warrior : BaseWarrior
+    {
+    public string name = ""; // Name must be accessible from outside
+
+    public Warrior()
+        {
+        characterclass = "Warrior";
+        strength += 5;
+        dexterity += 2;
+        intelligence += 1;
         }
 
-    public class BaseAttributes : Weapon
+    public void LevelUp()
         {
-        protected int dexterity = 0;
-        protected int intelligence = 0;
-        protected int level = 0;
-        protected int strength = 0;
-        protected double damage = 0;
-        protected string characterclass = "";
-        
-
-        //public Slot mySlot { get; set; }
-
-        
-
-        
-
-        public void showStats()
-            {
-            Console.WriteLine( "Here are the values of your character's (" + characterclass + ") base attributes:\n\nStength: " + strength + "\nDexterity: " + dexterity + "\nintelligence: " + intelligence + "\nLevel: " + level );
-            }
+        strength += 3;
+        dexterity += 2;
+        intelligence++;
+        level++;
+        setDamage();
         }
 
-    public class Weapon
+    private void setDamage()
         {
-        public string ItemName { get; set; }
-        public int RequiredLevel { get; set; }
-        public string ItemSlot { get; set; }
-        public string WeaponType { get; set; }
-
-        public double Damage { get; set; }
-        public double AttackSpeed { get; set; }        
+        damage += ( intelligence / 100 * 1 );
+        // depending on amour, weapon and
         }
 
-    public enum SLOT_WEAPON
-        {
-        HEAD,
-        BODY,
-        LEGS,
-        WEAPON
-        }
+    // equip with weapon
 
-    public enum WeaponType
-        {
-        WEAPON_AXE,
-        WEAPON_BOW,
-        WEAPON_DAGGER,
-        WEAPON_HAMMER,
-        WEAPON_STAFF,
-        WEAPON_SWORD,
-        WEAPON_WAND,
-        }
+    // equip with amour (head, body, feet)
+    }
 
-   
+// defining base classes with individual combat values aso.
+public abstract class BaseMage : BaseAttributes
+    {
+    protected string weaponTypes = "Staff, Wand";
+    protected string armorTypes = "Cloth";
+
+    // some other stuff
+    }
+
+public abstract class BaseRanger : BaseAttributes
+    {
+    protected string weaponTypes = "Bow";
+    protected string armorTypes = "Leather, Mail";
+
+    // some other values
+    }
+
+public abstract class BaseRogue : BaseAttributes
+    {
+    protected string weaponTypes = "Dagger, Sword";
+    protected string armorTypes = "Leather, Mail";
+
+    // some other values
+    }
+
+public abstract class BaseWarrior : BaseAttributes
+    {
+    protected string weaponTypes = "Axe, Hammer, Sword";
+    protected string armorTypes = "Mail, Plate";
+
+    // some other values
+    }
+
+public class BaseAttributes : Weapon
+    {
+    protected int dexterity = 0;
+    protected int intelligence = 0;
+    protected int level = 0;
+    protected int strength = 0;
+    protected double damage = 0;
+    protected string characterclass = "";
+
+    //public Slot mySlot { get; set; }
+
+    public void showStats()
+        {
+        Console.WriteLine( "Here are the values of your character's (" + characterclass + ") base attributes:\n\nStength: " + strength + "\nDexterity: " + dexterity + "\nintelligence: " + intelligence + "\nLevel: " + level );
+        }
+    }
+
+public class Weapon
+    {
+    public string ItemName { get; set; }
+    public int RequiredLevel { get; set; }
+    public string ItemSlot { get; set; }
+    public string WeaponType { get; set; }
+
+    public double Damage { get; set; }
+    public double AttackSpeed { get; set; }
+    }
+
+public enum SLOT_WEAPON
+    {
+    HEAD,
+    BODY,
+    LEGS,
+    WEAPON
+    }
+
+public enum WeaponType
+    {
+    WEAPON_AXE,
+    WEAPON_BOW,
+    WEAPON_DAGGER,
+    WEAPON_HAMMER,
+    WEAPON_STAFF,
+    WEAPON_SWORD,
+    WEAPON_WAND,
+    }
     }
