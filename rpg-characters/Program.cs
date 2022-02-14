@@ -34,17 +34,31 @@ namespace rpg_characters
             warrior.LevelUp();
             warrior.showStats();
 
+            // Make sure your weapon values look like this while testing
             Weapon testAxe = new Weapon()
                 {
-                ItemName = "Common Axe",
-                RequiredLevel = 1,
-                ItemSlot = "Weapon",
-                WeaponType = "Axe",
-                Damage = 7,
-                AttackSpeed = 1.1
+                ItemName = "Common Axe", // String
+                RequiredLevel = 1, // int
+                ItemSlot = Slot.SLOT_WEAPON, // Enums Slot
+                TypeOfWeapon = WeaponType.WEAPON_AXE, // Enums WeaponType
+                Damage = 7, // int
+                AttackSpeed = 1.1 // double
                 };
 
-            mage.EquipWeapon( testAxe );
+            Armour testPlateBody = new Armour()
+                {
+                ItemName = "Common plate body armour",
+                RequiredLevel= 1,
+                ItemSlot= Slot.SLOT_BODY,
+                ArmourType = ArmourType.ARMOUR_PLATE,
+                Strength = 1
+                };
+
+            //mage.EquipWeapon( testAxe );
+
+            mage.EquipArmour( testPlateBody );
+
+            mage.showStats();
 
             Console.ReadLine();
             }
@@ -54,8 +68,9 @@ namespace rpg_characters
         {
         public string name = ""; // Name must be accessible from outside
 
-        private static Dictionary<string, string> Slot = new Dictionary<string, string>();
-        private static Dictionary<int, string> AllowedWeaponType = new Dictionary<int, string>();
+        private static Dictionary<Enum, string> mySlot = new Dictionary<Enum, string>(); // mySlot
+        private static Dictionary<int, Enum> AllowedWeaponType = new Dictionary<int, Enum>(); // AllowedWeaponType
+        private static Dictionary<int, Enum> AllowedArmourType = new Dictionary<int, Enum>(); // AllowedArmourType
 
         public Mage()
             {
@@ -64,13 +79,15 @@ namespace rpg_characters
             dexterity = 1;
             intelligence = 8;
 
-            Slot.Add( "Head", "" );
-            Slot.Add( "Body", "" );
-            Slot.Add( "Legs", "" );
-            Slot.Add( "Weapon", "" );
+            mySlot.Add( Slot.SLOT_HEAD, "" );
+            mySlot.Add( Slot.SLOT_BODY, "" );
+            mySlot.Add( Slot.SLOT_LEGS, "" );
+            mySlot.Add( Slot.SLOT_WEAPON, "" );
 
-            AllowedWeaponType.Add( 0, "Staff" );
-            AllowedWeaponType.Add( 1, "Wand" );
+            AllowedWeaponType.Add( 0, WeaponType.WEAPON_STAFF );
+            AllowedWeaponType.Add( 1, WeaponType.WEAPON_WAND );
+
+            AllowedArmourType.Add( 0, ArmourType.ARMOUR_CLOTH );
             }
 
         public void LevelUp()
@@ -85,37 +102,57 @@ namespace rpg_characters
 
         public void EquipWeapon( Weapon weapon )
             {
+            Console.WriteLine( "\nRetrieving Weapon: " + weapon.TypeOfWeapon );
             bool found = false;
-            string typeOfWapon = weapon.WeaponType;
+
             for ( int i = 0; i < AllowedWeaponType.Count; i++ )
                 {
-                if ( AllowedWeaponType[i] == typeOfWapon )
+                if ( AllowedWeaponType[i].Equals( weapon.TypeOfWeapon ) )
                     {
                     found = true;
                     break;
                     }
                 }
             if ( found == false ) throw new InvalidWeaponException();
-            if ( weapon.RequiredLevel >= level ) throw new InvalidLevelException();
+            if ( weapon.RequiredLevel > level ) throw new InvalidLevelException();
 
-            Console.WriteLine( "You are allowed to wear this weapon!" ); // Ausbauen!!!
-            Slot.Remove( "Weapon" );
-            Slot.Add( "Weapon", weapon.ItemName );
+            Console.WriteLine( "You are allowed to wear this weapon!" );
+            mySlot.Remove( weapon.ItemSlot );
+            mySlot.Add( weapon.ItemSlot, weapon.ItemName.ToString() );
             damage += weapon.Damage;
             attackSpeed = weapon.AttackSpeed;
             }
 
-        //Console.WriteLine( "You are allowed!" );
+        public void EquipArmour( Armour armour )
+            {
+            Console.WriteLine( "\nRetrieving Armour: " + armour.ItemName );
+
+            bool found = false;
+
+            for ( int i = 0; i < AllowedArmourType.Count; i++ )
+                {
+                Console.WriteLine( AllowedArmourType[i] );
+                Console.WriteLine( armour.ArmourType );
+                if ( AllowedArmourType[i].Equals( armour.ArmourType ) )
+                    {
+                    found = true;
+                    break;
+                    }
+                }
+            if ( found == false ) throw new InvalidArmourException();
+
+            if ( armour.RequiredLevel > level ) throw new InvalidLevelException();
+            Console.WriteLine( "You are allowed to wear this armour!" );
+            mySlot.Remove( armour.ItemSlot );
+            mySlot.Add( armour.ItemSlot, armour.ArmourType.ToString() );
+            strength += armour.Strength;
+            }
 
         private void setDamage()
             {
             damage += ( intelligence / 100 * 1 );
             // depending on amour, weapon and
             }
-
-        // equip with weapon
-
-        // equip with amour (head, body, feet)
         }
 
     public class Ranger : BaseRanger
@@ -247,21 +284,21 @@ namespace rpg_characters
         // some other values
         }
 
-    public class BaseAttributes : Weapon
+    public abstract class BaseAttributes : Weapon
         {
         protected int dexterity = 0;
         protected int intelligence = 0;
         protected int level = 0;
         protected int strength = 0;
-        protected double damage = 0;
+        protected double damage = 1;
         protected string characterclass = "";
-        protected double attackSpeed = 0;
+        protected double attackSpeed = 1;
 
         //public Slot mySlot { get; set; }
 
         public void showStats()
             {
-            Console.WriteLine( "Here are the values of your character's (" + characterclass + ") base attributes:\n\nStength: " + strength + "\nDexterity: " + dexterity + "\nintelligence: " + intelligence + "\nLevel: " + level );
+            Console.WriteLine( "Here are the values of your character's (" + characterclass + ") base attributes:\n\nStength: " + strength + "\nDexterity: " + dexterity + "\nintelligence: " + intelligence + "\nLevel: " + level + "\nAttack Speed: " + attackSpeed + "\nDamage: " + damage );
             }
         }
 
@@ -269,19 +306,29 @@ namespace rpg_characters
         {
         public string ItemName { get; set; }
         public int RequiredLevel { get; set; }
-        public string ItemSlot { get; set; }
-        public string WeaponType { get; set; }
+        public Enum ItemSlot { get; set; }
+        public Enum TypeOfWeapon { get; set; }
 
         public double Damage { get; set; }
         public double AttackSpeed { get; set; }
         }
 
-    public enum SLOT_WEAPON
+    public class Armour
         {
-        HEAD,
-        BODY,
-        LEGS,
-        WEAPON
+        public string ItemName { get; set; }
+        public int RequiredLevel { get; set; }
+        public Enum ItemSlot { get; set; }
+        public Enum ArmourType { get; set; }
+
+        public int Strength { get; set; }
+        }
+
+    public enum Slot
+        {
+        SLOT_HEAD,
+        SLOT_BODY,
+        SLOT_LEGS,
+        SLOT_WEAPON
         }
 
     public enum WeaponType
@@ -292,6 +339,14 @@ namespace rpg_characters
         WEAPON_HAMMER,
         WEAPON_STAFF,
         WEAPON_SWORD,
-        WEAPON_WAND,
+        WEAPON_WAND
+        }
+
+    public enum ArmourType
+        {
+        ARMOUR_CLOTH,
+        ARMOUR_LEATHER,
+        ARMOUR_MAIL,
+        ARMOUR_PLATE
         }
     }
