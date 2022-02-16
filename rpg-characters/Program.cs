@@ -8,76 +8,107 @@ namespace rpg_characters
         {
         private static void Main( string[] args )
             {
-            // decrlaring base variables
+            
 
             Mage mage = new Mage();
 
+            mage.showBaseStats();
             mage.LevelUp();
             mage.LevelUp();
             mage.LevelUp();
             mage.showBaseStats();
 
-            /* Ranger ranger = new Ranger();
-             ranger.LevelUp();
-             ranger.LevelUp();
-             ranger.LevelUp();
-             ranger.showStats();*/
+            /*Ranger ranger = new Ranger();
+            ranger.LevelUp();
+            ranger.LevelUp();
+            ranger.LevelUp();
+            ranger.showBaseStats();
 
-            /*Rogue rogue = new Rogue();
+            Rogue rogue = new Rogue();
             rogue.LevelUp();
             rogue.LevelUp();
             rogue.LevelUp();
-            rogue.showStats();*/
+            rogue.showBaseStats();
 
-            /*Warrior warrior = new Warrior();
+            Warrior warrior = new Warrior();
             warrior.LevelUp();
             warrior.LevelUp();
             warrior.LevelUp();
-            warrior.showStats();*/
+            warrior.showBaseStats();*/
 
             // Make sure your weapon values look like this while testing!!!
-            Weapon testAxe = new Weapon()
+            Weapon testStaff = new Weapon()
                 {
-                ItemName = "Common Axe", // String
+                ItemName = "Common Staff", // String
                 RequiredLevel = 1, // int
                 ItemSlot = Slot.SLOT_WEAPON, // Enums Slot
                 TypeOfWeapon = WeaponType.WEAPON_STAFF, // Enums WeaponType
                 Damage = 7, // int
-                AttackSpeed = 1.1 // double
+                AttackSpeed = 1.7 // double
                 };
 
-            Armour testPlateBody = new Armour()
+            Armour testClothHead = new Armour()
                 {
-                ItemName = "Common plate body armour",
+                ItemName = "Common cloth head armour",
+                RequiredLevel= 1,
+                ItemSlot= Slot.SLOT_HEAD,
+                ArmourType = ArmourType.ARMOUR_CLOTH,
+                Strength = 1,
+                Intelligence = 0,
+                Dexterity = 0,
+                };
+
+            Armour testClothBody = new Armour()
+                {
+                ItemName = "Common cloth body armour",
                 RequiredLevel= 1,
                 ItemSlot= Slot.SLOT_BODY,
                 ArmourType = ArmourType.ARMOUR_CLOTH,
-                Strength = 1
+                Strength = 5,
+                Intelligence = 6,
+                Dexterity = 8,
                 };
 
-            mage.EquipWeapon( testAxe );
+            Armour testClothLegs = new Armour()
+                {
+                ItemName = "Common cloth legs armour",
+                RequiredLevel= 1,
+                ItemSlot= Slot.SLOT_LEGS,
+                ArmourType = ArmourType.ARMOUR_CLOTH,
+                Strength = 2,
+                Intelligence = 5,
+                Dexterity = 3,
+                };
 
-            mage.EquipArmour( testPlateBody );
+            Armour testClothLegs2 = new Armour()
+                {
+                ItemName = "Common cloth legs armour override",
+                RequiredLevel= 1,
+                ItemSlot= Slot.SLOT_LEGS,
+                ArmourType = ArmourType.ARMOUR_CLOTH,
+                Strength = 4,
+                Intelligence = 9,
+                Dexterity = 5,
+                };
 
-            //mage.showBaseStats();
-            //mage.showActualStats();
+            mage.EquipWeapon( testStaff );
+
+            mage.EquipArmour( testClothHead );
+            mage.EquipArmour( testClothBody );
+            mage.EquipArmour( testClothLegs );
+            mage.EquipArmour( testClothLegs2 );
+
             }
         }
 
-    public class Mage : BaseAttributes
-        {
-        public string name = ""; // Name can be changed from outside
+    /* 
+        *** Following logic as far as I understood ***        
 
-        private static Dictionary<Slot, double> mySlot = new Dictionary<Slot, double>(); // mySlot
-        private static Dictionary<int, WeaponType> AllowedWeaponType = new Dictionary<int, WeaponType>(); // AllowedWeaponType
-        private static Dictionary<int, ArmourType> AllowedArmourType = new Dictionary<int, ArmourType>(); // AllowedArmourType
-
-        /*
-         *** Base Attributes ***
-         Mage: S = 1, D = 1, I = 8 Initial
-         lvlup: S += 1, D +=1, I +=5 , Level +=1
-         Level2: S = 2, D = 2, I = 13
-         Base Damage (Intelligence) = I + (I *100 / 1)  ( 8 -> 8,08)
+        *** Base Attributes ***
+        Mage: S = 1, D = 1, I = 8 Initial
+        lvlup: S += 1, D +=1, I +=5 , Level +=1
+        Level2: S = 2, D = 2, I = 13
+        Base Damage (Intelligence) = I + (I *100 / 1)  ( 8 -> 8,08)
 
         *** 3 x Armor Attributes ***
         Head, Body, Legs => Strength = Total Attribute = BaseStrength + Head + Body + Legs
@@ -97,20 +128,33 @@ namespace rpg_characters
         All Equipped Armor: Head + Body + Legs
         */
 
-        protected void TotalAttrributeCalculation()
+
+    public class Mage : BaseAttributes
+        {
+        public string name = ""; // Name can be changed from outside
+
+        private static Dictionary<Slot, double> mySlot = new Dictionary<Slot, double>(); // mySlot
+        private static Dictionary<int, WeaponType> AllowedWeaponType = new Dictionary<int, WeaponType>(); // AllowedWeaponType
+        private static Dictionary<int, ArmourType> AllowedArmourType = new Dictionary<int, ArmourType>(); // AllowedArmourType
+
+        
+
+        protected void TotalAttrributeCalculation() // That's my understanding how it should work
             {
             double TotalAttribute = ActualItelligence + ActualDexterity + ActualStrength + (ActualItelligence * 100 / 1);
             double AmourAttributes = 0;
             double TotalCharacterDamage = 0;
             if ( mySlot[Slot.SLOT_BODY] != 0 ) { AmourAttributes = BaseIntelligence + BaseDexterity + BaseStrength + mySlot[Slot.SLOT_BODY]; }
-            if ( mySlot[Slot.SLOT_HEAD] != 0 ) { AmourAttributes = AmourAttributes + BaseIntelligence + BaseDexterity + BaseStrength; }
-            if ( mySlot[Slot.SLOT_LEGS] != 0 ) { AmourAttributes = AmourAttributes + BaseIntelligence + BaseDexterity + BaseStrength; }
+            if ( mySlot[Slot.SLOT_HEAD] != 0 ) { AmourAttributes = AmourAttributes + BaseIntelligence + BaseDexterity + mySlot[Slot.SLOT_HEAD]; }
+            if ( mySlot[Slot.SLOT_LEGS] != 0 ) { AmourAttributes = AmourAttributes + BaseIntelligence + BaseDexterity + mySlot[Slot.SLOT_LEGS]; }
             TotalAttribute = TotalAttribute + AmourAttributes;
+
             DPS = mySlot[Slot.SLOT_WEAPON]; // Is already calculated in EquipWeapon()
             // DPS * (1 + Total Attribute / 100)
             TotalCharacterDamage = DPS * ( 1 + TotalAttribute / 100 );
 
             Console.WriteLine( "TotalCharacterDamage: " + TotalCharacterDamage );
+            
             }
 
         public Mage()
@@ -124,19 +168,15 @@ namespace rpg_characters
             HeadStrength = 0;
             BodyStrength = 0;
             LegsStrength = 0;
+            TotalArmourAttributes = 0;
 
             CharacterClass = "Mage";
-
-            // Actual values are set to store a momentum
-            ActualStrength = BaseStrength + HeadStrength + BodyStrength + LegsStrength;
-            ActualDexterity = BaseDexterity;
-            ActualItelligence = BaseIntelligence;
-
+            
             // The Armour and weapon Slots
-            mySlot.Add( Slot.SLOT_HEAD, 0 );
-            mySlot.Add( Slot.SLOT_BODY, 0 );
-            mySlot.Add( Slot.SLOT_LEGS, 0 );
-            mySlot.Add( Slot.SLOT_WEAPON, 1 );
+            mySlot.Add( Slot.SLOT_HEAD, 0 ); // Value is Attribute + given Value
+            mySlot.Add( Slot.SLOT_BODY, 0 ); // Value is Attribute + given Value
+            mySlot.Add( Slot.SLOT_LEGS, 0 ); // Value is Attribute + given Value
+            mySlot.Add( Slot.SLOT_WEAPON, 1 ); // Value is DPS
 
             // Allowed weapons (could be increased later)
             AllowedWeaponType.Add( 0, WeaponType.WEAPON_STAFF );
@@ -153,7 +193,11 @@ namespace rpg_characters
             BaseIntelligence += 5;
             BaseLevel++;
             BaseDamage = 1;
+            ActualStrength = BaseStrength;
+            ActualItelligence = BaseIntelligence;
+            ActualAttackSpeed = BaseDexterity;
             TotalAttributes = BaseStrength + BaseDexterity + BaseIntelligence;
+            Console.WriteLine($"{CharacterClass} was leveled up!");
             TotalAttrributeCalculation();
             }
 
@@ -178,7 +222,7 @@ namespace rpg_characters
 
             // Writing to the Slots
             mySlot.Remove( Slot.SLOT_WEAPON );
-            mySlot.Add( Slot.SLOT_WEAPON, DPS );
+            mySlot.Add( Slot.SLOT_WEAPON, DPS ); ;
 
             // Storing the actual damage to calculate with
             ActualDamage = BaseDamage + weapon.Damage;
@@ -205,28 +249,36 @@ namespace rpg_characters
             if ( armour.RequiredLevel > BaseLevel ) throw new InvalidLevelException(); // Get off if level too low
             Console.WriteLine( "You are allowed to wear this armour!" );
 
-            if ( armour.ItemSlot.Equals( "WEAPON_HEAD" ) )
+            // Hmm, now I have to store the data somewhere
+            // I decided to calculate all the given attributes together and store it in the Slot
+            // There are surely better OOP ways to do that but I'm new at this and have to learn how
+            // Time ist short...
+
+            Console.WriteLine( "Slot: " + armour.ItemSlot );
+
+            if ( armour.ItemSlot.Equals( Slot.SLOT_HEAD) )
                 {
-                HeadStrength = armour.Strength;
+                TotalArmourAttributes = BaseDamage + BaseDexterity + BaseIntelligence + armour.Dexterity + armour.Intelligence + armour.Strength;
                 mySlot.Remove( Slot.SLOT_HEAD );
-                mySlot.Add( Slot.SLOT_HEAD, HeadStrength );// Store the value in Slot
-                ActualStrength = BaseStrength + mySlot[Slot.SLOT_HEAD] + mySlot[Slot.SLOT_BODY] + mySlot[Slot.SLOT_LEGS];
+                mySlot.Add( Slot.SLOT_HEAD, TotalArmourAttributes );// Store the value in Slot
+                Console.WriteLine( "TotalArmourAttributes: " + TotalArmourAttributes );
                 }
 
-            if ( armour.ItemSlot.Equals( "WEAPON_BODY" ) )
+            if ( armour.ItemSlot.Equals( Slot.SLOT_BODY ) )
                 {
-                BodyStrength = armour.Strength;
+                TotalArmourAttributes = BaseDamage + BaseDexterity + BaseIntelligence + armour.Dexterity + armour.Intelligence + armour.Strength;
                 mySlot.Remove( Slot.SLOT_BODY );
-                mySlot.Add( Slot.SLOT_BODY, BodyStrength );// Store the value in Slot
-                ActualStrength = BaseStrength + mySlot[Slot.SLOT_HEAD] + mySlot[Slot.SLOT_BODY] + mySlot[Slot.SLOT_LEGS];
+                mySlot.Add( Slot.SLOT_BODY, TotalArmourAttributes );// Store the value in Slot
+                Console.WriteLine( "TotalArmourAttributes: " + TotalArmourAttributes );
                 }
 
-            if ( armour.ItemSlot.Equals( "WEAPON_LEGS" ) )
+            if ( armour.ItemSlot.Equals( Slot.SLOT_LEGS ) )
                 {
+                TotalArmourAttributes = BaseDamage + BaseDexterity + BaseIntelligence + armour.Dexterity + armour.Intelligence + armour.Strength;
                 LegsStrength = armour.Strength;
                 mySlot.Remove( Slot.SLOT_LEGS );
-                mySlot.Add( Slot.SLOT_LEGS, LegsStrength ); // Store the value in Slot
-                ActualStrength = BaseStrength + mySlot[Slot.SLOT_HEAD] + mySlot[Slot.SLOT_BODY] + mySlot[Slot.SLOT_LEGS];
+                mySlot.Add( Slot.SLOT_LEGS, TotalArmourAttributes ); // Store the value in Slot
+                Console.WriteLine( "TotalArmourAttributes: " + TotalArmourAttributes );
                 }
             TotalAttrributeCalculation();
             }
@@ -234,102 +286,470 @@ namespace rpg_characters
 
     public class Ranger : BaseAttributes
         {
-        public string name = ""; // Name must be accessible from outside
+        
+        public string name = ""; // Name can be changed from outside
 
-        /* public Ranger()
-             {
-             CharacterClass = "Ranger";
-             strength = 1;
-             dexterity = 7;
-             intelligence = 1;
-             }
+        private static Dictionary<Slot, double> mySlot = new Dictionary<Slot, double>(); // mySlot
+        private static Dictionary<int, WeaponType> AllowedWeaponType = new Dictionary<int, WeaponType>(); // AllowedWeaponType
+        private static Dictionary<int, ArmourType> AllowedArmourType = new Dictionary<int, ArmourType>(); // AllowedArmourType
 
-         public void LevelUp()
-             {
-             strength++;
-             dexterity += 5;
-             intelligence++;
-             level++;
-             setDamage();
-             }*/
 
-        /*private void setDamage()
+
+        protected void TotalAttrributeCalculation() // That's my understanding how it should work
             {
-            damage += ( intelligence / 100 * 1 );
-            // depending on amour, weapon and
-            }*/
+            double TotalAttribute = ActualItelligence + ActualDexterity + ActualStrength + (ActualItelligence * 100 / 1);
+            double AmourAttributes = 0;
+            double TotalCharacterDamage = 0;
+            if ( mySlot[Slot.SLOT_BODY] != 0 ) { AmourAttributes = BaseIntelligence + BaseDexterity + BaseStrength + mySlot[Slot.SLOT_BODY]; }
+            if ( mySlot[Slot.SLOT_HEAD] != 0 ) { AmourAttributes = AmourAttributes + BaseIntelligence + BaseDexterity + mySlot[Slot.SLOT_HEAD]; }
+            if ( mySlot[Slot.SLOT_LEGS] != 0 ) { AmourAttributes = AmourAttributes + BaseIntelligence + BaseDexterity + mySlot[Slot.SLOT_LEGS]; }
+            TotalAttribute = TotalAttribute + AmourAttributes;
 
-        // equip with weapon
+            DPS = mySlot[Slot.SLOT_WEAPON]; // Is already calculated in EquipWeapon()
+            // DPS * (1 + Total Attribute / 100)
+            TotalCharacterDamage = DPS * ( 1 + TotalAttribute / 100 );
 
-        // equip with amour (head, body, feet)
+            Console.WriteLine( "TotalCharacterDamage: " + TotalCharacterDamage );
+
+            }
+
+        public Ranger()
+            {
+            // Initializing
+            BaseLevel = 1;
+            BaseDexterity = 7;
+            BaseStrength = 1;
+            BaseIntelligence = 1;
+            BaseAttackSpeed = 0;
+            HeadStrength = 0;
+            BodyStrength = 0;
+            LegsStrength = 0;
+            TotalArmourAttributes = 0;
+
+            CharacterClass = "Mage";
+
+            // The Armour and weapon Slots
+            mySlot.Add( Slot.SLOT_HEAD, 0 ); // Value is Attribute + given Value
+            mySlot.Add( Slot.SLOT_BODY, 0 ); // Value is Attribute + given Value
+            mySlot.Add( Slot.SLOT_LEGS, 0 ); // Value is Attribute + given Value
+            mySlot.Add( Slot.SLOT_WEAPON, 1 ); // Value is DPS
+
+            // Allowed weapons (could be increased later)
+            AllowedWeaponType.Add( 0, WeaponType.WEAPON_STAFF );
+            AllowedWeaponType.Add( 1, WeaponType.WEAPON_WAND );
+
+            // Allowed armour type (could be increased later)
+            AllowedArmourType.Add( 0, ArmourType.ARMOUR_CLOTH );
+            }
+
+        public void LevelUp() // Affectes the base values
+            {
+            BaseStrength++;
+            BaseDexterity +=5;
+            BaseIntelligence++;
+            BaseLevel++;
+            BaseDamage = 1;
+            ActualStrength = BaseStrength;
+            ActualItelligence = BaseIntelligence;
+            ActualAttackSpeed = BaseDexterity;
+            TotalAttributes = BaseStrength + BaseDexterity + BaseIntelligence;
+            Console.WriteLine( $"{CharacterClass} was leveled up!" );
+            TotalAttrributeCalculation();
+            }
+
+        public void EquipWeapon( Weapon weapon )
+            {
+            Console.WriteLine( "\nRetrieving Weapon: " + weapon.TypeOfWeapon );
+            bool found = false;
+
+            for ( int i = 0; i < AllowedWeaponType.Count; i++ )
+                {
+                if ( AllowedWeaponType[i].Equals( weapon.TypeOfWeapon ) ) // Is the weapon allowed to wear?
+                    {
+                    found = true;
+                    break;
+                    }
+                }
+            if ( found == false ) throw new InvalidWeaponException(); // as required, get off if not allowed
+            if ( weapon.RequiredLevel > BaseLevel ) throw new InvalidLevelException(); // as required, get off if BaseLevel too low
+
+            Console.WriteLine( "You are allowed to wear this weapon!" );
+            DPS = weapon.Damage * weapon.AttackSpeed; // DPS calculation
+
+            // Writing to the Slots
+            mySlot.Remove( Slot.SLOT_WEAPON );
+            mySlot.Add( Slot.SLOT_WEAPON, DPS ); ;
+
+            // Storing the actual damage to calculate with
+            ActualDamage = BaseDamage + weapon.Damage;
+
+            TotalAttrributeCalculation();
+            }
+
+        public void EquipArmour( Armour armour )
+            {
+            Console.WriteLine( "\nRetrieving Armour: " + armour.ItemName );
+
+            bool found = false;
+
+            for ( int i = 0; i < AllowedArmourType.Count; i++ )
+                {
+                if ( AllowedArmourType[i].Equals( armour.ArmourType ) ) // Is it allowed?
+                    {
+                    found = true;
+                    break;
+                    }
+                }
+            if ( found == false ) throw new InvalidArmourException(); // Get off if not allowed
+
+            if ( armour.RequiredLevel > BaseLevel ) throw new InvalidLevelException(); // Get off if level too low
+            Console.WriteLine( "You are allowed to wear this armour!" );
+
+            // Hmm, now I have to store the data somewhere
+            // I decided to calculate all the given attributes together and store it in the Slot
+            // There are surely better OOP ways to do that but I'm new at this and have to learn how
+            // Time ist short...
+
+            Console.WriteLine( "Slot: " + armour.ItemSlot );
+
+            if ( armour.ItemSlot.Equals( Slot.SLOT_HEAD ) )
+                {
+                TotalArmourAttributes = BaseDamage + BaseDexterity + BaseIntelligence + armour.Dexterity + armour.Intelligence + armour.Strength;
+                mySlot.Remove( Slot.SLOT_HEAD );
+                mySlot.Add( Slot.SLOT_HEAD, TotalArmourAttributes );// Store the value in Slot
+                Console.WriteLine( "TotalArmourAttributes: " + TotalArmourAttributes );
+                }
+
+            if ( armour.ItemSlot.Equals( Slot.SLOT_BODY ) )
+                {
+                TotalArmourAttributes = BaseDamage + BaseDexterity + BaseIntelligence + armour.Dexterity + armour.Intelligence + armour.Strength;
+                mySlot.Remove( Slot.SLOT_BODY );
+                mySlot.Add( Slot.SLOT_BODY, TotalArmourAttributes );// Store the value in Slot
+                Console.WriteLine( "TotalArmourAttributes: " + TotalArmourAttributes );
+                }
+
+            if ( armour.ItemSlot.Equals( Slot.SLOT_LEGS ) )
+                {
+                TotalArmourAttributes = BaseDamage + BaseDexterity + BaseIntelligence + armour.Dexterity + armour.Intelligence + armour.Strength;
+                LegsStrength = armour.Strength;
+                mySlot.Remove( Slot.SLOT_LEGS );
+                mySlot.Add( Slot.SLOT_LEGS, TotalArmourAttributes ); // Store the value in Slot
+                Console.WriteLine( "TotalArmourAttributes: " + TotalArmourAttributes );
+                }
+            TotalAttrributeCalculation();
+            }
+        
         }
 
     public class Rogue : BaseAttributes
         {
-        public string name = ""; // Name must be accessible from outside
+        public string name = ""; // Name can be changed from outside
 
-        /*public Rogue()
+        private static Dictionary<Slot, double> mySlot = new Dictionary<Slot, double>(); // mySlot
+        private static Dictionary<int, WeaponType> AllowedWeaponType = new Dictionary<int, WeaponType>(); // AllowedWeaponType
+        private static Dictionary<int, ArmourType> AllowedArmourType = new Dictionary<int, ArmourType>(); // AllowedArmourType
+
+
+
+        protected void TotalAttrributeCalculation() // That's my understanding how it should work
             {
-            CharacterClass = "Rogue";
-            ActualStrength = 2;
-            dexterity += 6;
-            intelligence += 1;
-            }
-*/
+            double TotalAttribute = ActualItelligence + ActualDexterity + ActualStrength + (ActualItelligence * 100 / 1);
+            double AmourAttributes = 0;
+            double TotalCharacterDamage = 0;
+            if ( mySlot[Slot.SLOT_BODY] != 0 ) { AmourAttributes = BaseIntelligence + BaseDexterity + BaseStrength + mySlot[Slot.SLOT_BODY]; }
+            if ( mySlot[Slot.SLOT_HEAD] != 0 ) { AmourAttributes = AmourAttributes + BaseIntelligence + BaseDexterity + mySlot[Slot.SLOT_HEAD]; }
+            if ( mySlot[Slot.SLOT_LEGS] != 0 ) { AmourAttributes = AmourAttributes + BaseIntelligence + BaseDexterity + mySlot[Slot.SLOT_LEGS]; }
+            TotalAttribute = TotalAttribute + AmourAttributes;
 
-        public void LevelUp()
+            DPS = mySlot[Slot.SLOT_WEAPON]; // Is already calculated in EquipWeapon()
+            // DPS * (1 + Total Attribute / 100)
+            TotalCharacterDamage = DPS * ( 1 + TotalAttribute / 100 );
+
+            Console.WriteLine( "TotalCharacterDamage: " + TotalCharacterDamage );
+
+            }
+
+        public Rogue()
+            {
+            // Initializing
+            BaseLevel = 1;
+            BaseDexterity = 6;
+            BaseStrength = 2;
+            BaseIntelligence = 1;
+            BaseAttackSpeed = 0;
+            HeadStrength = 0;
+            BodyStrength = 0;
+            LegsStrength = 0;
+            TotalArmourAttributes = 0;
+
+            CharacterClass = "Mage";
+
+            // The Armour and weapon Slots
+            mySlot.Add( Slot.SLOT_HEAD, 0 ); // Value is Attribute + given Value
+            mySlot.Add( Slot.SLOT_BODY, 0 ); // Value is Attribute + given Value
+            mySlot.Add( Slot.SLOT_LEGS, 0 ); // Value is Attribute + given Value
+            mySlot.Add( Slot.SLOT_WEAPON, 1 ); // Value is DPS
+
+            // Allowed weapons (could be increased later)
+            AllowedWeaponType.Add( 0, WeaponType.WEAPON_STAFF );
+            AllowedWeaponType.Add( 1, WeaponType.WEAPON_WAND );
+
+            // Allowed armour type (could be increased later)
+            AllowedArmourType.Add( 0, ArmourType.ARMOUR_CLOTH );
+            }
+
+        public void LevelUp() // Affectes the base values
             {
             BaseStrength++;
-            BaseDexterity += 4;
+            BaseDexterity +=4;
             BaseIntelligence++;
             BaseLevel++;
-            setBaseDamage();
+            BaseDamage = 1;
+            ActualStrength = BaseStrength;
+            ActualItelligence = BaseIntelligence;
+            ActualAttackSpeed = BaseDexterity;
+            TotalAttributes = BaseStrength + BaseDexterity + BaseIntelligence;
+            Console.WriteLine( $"{CharacterClass} was leveled up!" );
+            TotalAttrributeCalculation();
             }
 
-        private void setBaseDamage()
+        public void EquipWeapon( Weapon weapon )
             {
-            //damage += ( intelligence / 100 * 1 );
-            // depending on amour, weapon and
+            Console.WriteLine( "\nRetrieving Weapon: " + weapon.TypeOfWeapon );
+            bool found = false;
+
+            for ( int i = 0; i < AllowedWeaponType.Count; i++ )
+                {
+                if ( AllowedWeaponType[i].Equals( weapon.TypeOfWeapon ) ) // Is the weapon allowed to wear?
+                    {
+                    found = true;
+                    break;
+                    }
+                }
+            if ( found == false ) throw new InvalidWeaponException(); // as required, get off if not allowed
+            if ( weapon.RequiredLevel > BaseLevel ) throw new InvalidLevelException(); // as required, get off if BaseLevel too low
+
+            Console.WriteLine( "You are allowed to wear this weapon!" );
+            DPS = weapon.Damage * weapon.AttackSpeed; // DPS calculation
+
+            // Writing to the Slots
+            mySlot.Remove( Slot.SLOT_WEAPON );
+            mySlot.Add( Slot.SLOT_WEAPON, DPS ); ;
+
+            // Storing the actual damage to calculate with
+            ActualDamage = BaseDamage + weapon.Damage;
+
+            TotalAttrributeCalculation();
             }
 
-        // equip with weapon
+        public void EquipArmour( Armour armour )
+            {
+            Console.WriteLine( "\nRetrieving Armour: " + armour.ItemName );
 
-        // equip with amour (head, body, feet)
+            bool found = false;
+
+            for ( int i = 0; i < AllowedArmourType.Count; i++ )
+                {
+                if ( AllowedArmourType[i].Equals( armour.ArmourType ) ) // Is it allowed?
+                    {
+                    found = true;
+                    break;
+                    }
+                }
+            if ( found == false ) throw new InvalidArmourException(); // Get off if not allowed
+
+            if ( armour.RequiredLevel > BaseLevel ) throw new InvalidLevelException(); // Get off if level too low
+            Console.WriteLine( "You are allowed to wear this armour!" );
+
+            // Hmm, now I have to store the data somewhere
+            // I decided to calculate all the given attributes together and store it in the Slot
+            // There are surely better OOP ways to do that but I'm new at this and have to learn how
+            // Time ist short...
+
+            Console.WriteLine( "Slot: " + armour.ItemSlot );
+
+            if ( armour.ItemSlot.Equals( Slot.SLOT_HEAD ) )
+                {
+                TotalArmourAttributes = BaseDamage + BaseDexterity + BaseIntelligence + armour.Dexterity + armour.Intelligence + armour.Strength;
+                mySlot.Remove( Slot.SLOT_HEAD );
+                mySlot.Add( Slot.SLOT_HEAD, TotalArmourAttributes );// Store the value in Slot
+                Console.WriteLine( "TotalArmourAttributes: " + TotalArmourAttributes );
+                }
+
+            if ( armour.ItemSlot.Equals( Slot.SLOT_BODY ) )
+                {
+                TotalArmourAttributes = BaseDamage + BaseDexterity + BaseIntelligence + armour.Dexterity + armour.Intelligence + armour.Strength;
+                mySlot.Remove( Slot.SLOT_BODY );
+                mySlot.Add( Slot.SLOT_BODY, TotalArmourAttributes );// Store the value in Slot
+                Console.WriteLine( "TotalArmourAttributes: " + TotalArmourAttributes );
+                }
+
+            if ( armour.ItemSlot.Equals( Slot.SLOT_LEGS ) )
+                {
+                TotalArmourAttributes = BaseDamage + BaseDexterity + BaseIntelligence + armour.Dexterity + armour.Intelligence + armour.Strength;
+                LegsStrength = armour.Strength;
+                mySlot.Remove( Slot.SLOT_LEGS );
+                mySlot.Add( Slot.SLOT_LEGS, TotalArmourAttributes ); // Store the value in Slot
+                Console.WriteLine( "TotalArmourAttributes: " + TotalArmourAttributes );
+                }
+            TotalAttrributeCalculation();
+            }
         }
 
     public class Warrior : BaseAttributes
         {
-        public string name = ""; // Name must be accessible from outside
+        public string name = ""; // Name can be changed from outside
 
-        /*public Warrior()
+        private static Dictionary<Slot, double> mySlot = new Dictionary<Slot, double>(); // mySlot
+        private static Dictionary<int, WeaponType> AllowedWeaponType = new Dictionary<int, WeaponType>(); // AllowedWeaponType
+        private static Dictionary<int, ArmourType> AllowedArmourType = new Dictionary<int, ArmourType>(); // AllowedArmourType
+
+
+
+        protected void TotalAttrributeCalculation() // That's my understanding how it should work
             {
-            characterclass = "Warrior";
-            strength += 5;
-            dexterity += 2;
-            intelligence += 1;
+            double TotalAttribute = ActualItelligence + ActualDexterity + ActualStrength + (ActualItelligence * 100 / 1);
+            double AmourAttributes = 0;
+            double TotalCharacterDamage = 0;
+            if ( mySlot[Slot.SLOT_BODY] != 0 ) { AmourAttributes = BaseIntelligence + BaseDexterity + BaseStrength + mySlot[Slot.SLOT_BODY]; }
+            if ( mySlot[Slot.SLOT_HEAD] != 0 ) { AmourAttributes = AmourAttributes + BaseIntelligence + BaseDexterity + mySlot[Slot.SLOT_HEAD]; }
+            if ( mySlot[Slot.SLOT_LEGS] != 0 ) { AmourAttributes = AmourAttributes + BaseIntelligence + BaseDexterity + mySlot[Slot.SLOT_LEGS]; }
+            TotalAttribute = TotalAttribute + AmourAttributes;
+
+            DPS = mySlot[Slot.SLOT_WEAPON]; // Is already calculated in EquipWeapon()
+            // DPS * (1 + Total Attribute / 100)
+            TotalCharacterDamage = DPS * ( 1 + TotalAttribute / 100 );
+
+            Console.WriteLine( "TotalCharacterDamage: " + TotalCharacterDamage );
+
             }
 
-        public void LevelUp()
+        public Warrior()
             {
-            strength += 3;
-            dexterity += 2;
-            intelligence++;
-            level++;
-            setDamage();
+            // Initializing
+            BaseLevel = 1;
+            BaseDexterity = 2;
+            BaseStrength = 5;
+            BaseIntelligence = 1;
+            BaseAttackSpeed = 0;
+            HeadStrength = 0;
+            BodyStrength = 0;
+            LegsStrength = 0;
+            TotalArmourAttributes = 0;
+
+            CharacterClass = "Mage";
+
+            // The Armour and weapon Slots
+            mySlot.Add( Slot.SLOT_HEAD, 0 ); // Value is Attribute + given Value
+            mySlot.Add( Slot.SLOT_BODY, 0 ); // Value is Attribute + given Value
+            mySlot.Add( Slot.SLOT_LEGS, 0 ); // Value is Attribute + given Value
+            mySlot.Add( Slot.SLOT_WEAPON, 1 ); // Value is DPS
+
+            // Allowed weapons (could be increased later)
+            AllowedWeaponType.Add( 0, WeaponType.WEAPON_STAFF );
+            AllowedWeaponType.Add( 1, WeaponType.WEAPON_WAND );
+
+            // Allowed armour type (could be increased later)
+            AllowedArmourType.Add( 0, ArmourType.ARMOUR_CLOTH );
             }
 
-        private void setDamage()
+        public void LevelUp() // Affectes the base values
             {
-            damage += ( intelligence / 100 * 1 );
-            // depending on amour, weapon and
-            }*/
+            BaseStrength +=3;
+            BaseDexterity +=2;
+            BaseIntelligence++;
+            BaseLevel++;
+            BaseDamage = 1;
+            ActualStrength = BaseStrength;
+            ActualItelligence = BaseIntelligence;
+            ActualAttackSpeed = BaseDexterity;
+            TotalAttributes = BaseStrength + BaseDexterity + BaseIntelligence;
+            Console.WriteLine( $"{CharacterClass} was leveled up!" );
+            TotalAttrributeCalculation();
+            }
 
-        // equip with weapon
+        public void EquipWeapon( Weapon weapon )
+            {
+            Console.WriteLine( "\nRetrieving Weapon: " + weapon.TypeOfWeapon );
+            bool found = false;
 
-        // equip with amour (head, body, feet)
+            for ( int i = 0; i < AllowedWeaponType.Count; i++ )
+                {
+                if ( AllowedWeaponType[i].Equals( weapon.TypeOfWeapon ) ) // Is the weapon allowed to wear?
+                    {
+                    found = true;
+                    break;
+                    }
+                }
+            if ( found == false ) throw new InvalidWeaponException(); // as required, get off if not allowed
+            if ( weapon.RequiredLevel > BaseLevel ) throw new InvalidLevelException(); // as required, get off if BaseLevel too low
+
+            Console.WriteLine( "You are allowed to wear this weapon!" );
+            DPS = weapon.Damage * weapon.AttackSpeed; // DPS calculation
+
+            // Writing to the Slots
+            mySlot.Remove( Slot.SLOT_WEAPON );
+            mySlot.Add( Slot.SLOT_WEAPON, DPS ); ;
+
+            // Storing the actual damage to calculate with
+            ActualDamage = BaseDamage + weapon.Damage;
+
+            TotalAttrributeCalculation();
+            }
+
+        public void EquipArmour( Armour armour )
+            {
+            Console.WriteLine( "\nRetrieving Armour: " + armour.ItemName );
+
+            bool found = false;
+
+            for ( int i = 0; i < AllowedArmourType.Count; i++ )
+                {
+                if ( AllowedArmourType[i].Equals( armour.ArmourType ) ) // Is it allowed?
+                    {
+                    found = true;
+                    break;
+                    }
+                }
+            if ( found == false ) throw new InvalidArmourException(); // Get off if not allowed
+
+            if ( armour.RequiredLevel > BaseLevel ) throw new InvalidLevelException(); // Get off if level too low
+            Console.WriteLine( "You are allowed to wear this armour!" );
+
+            // Hmm, now I have to store the data somewhere
+            // I decided to calculate all the given attributes together and store it in the Slot
+            // There are surely better OOP ways to do that but I'm new at this and have to learn how
+            // Time ist short...
+
+            Console.WriteLine( "Slot: " + armour.ItemSlot );
+
+            if ( armour.ItemSlot.Equals( Slot.SLOT_HEAD ) )
+                {
+                TotalArmourAttributes = BaseDamage + BaseDexterity + BaseIntelligence + armour.Dexterity + armour.Intelligence + armour.Strength;
+                mySlot.Remove( Slot.SLOT_HEAD );
+                mySlot.Add( Slot.SLOT_HEAD, TotalArmourAttributes );// Store the value in Slot
+                Console.WriteLine( "TotalArmourAttributes: " + TotalArmourAttributes );
+                }
+
+            if ( armour.ItemSlot.Equals( Slot.SLOT_BODY ) )
+                {
+                TotalArmourAttributes = BaseDamage + BaseDexterity + BaseIntelligence + armour.Dexterity + armour.Intelligence + armour.Strength;
+                mySlot.Remove( Slot.SLOT_BODY );
+                mySlot.Add( Slot.SLOT_BODY, TotalArmourAttributes );// Store the value in Slot
+                Console.WriteLine( "TotalArmourAttributes: " + TotalArmourAttributes );
+                }
+
+            if ( armour.ItemSlot.Equals( Slot.SLOT_LEGS ) )
+                {
+                TotalArmourAttributes = BaseDamage + BaseDexterity + BaseIntelligence + armour.Dexterity + armour.Intelligence + armour.Strength;
+                LegsStrength = armour.Strength;
+                mySlot.Remove( Slot.SLOT_LEGS );
+                mySlot.Add( Slot.SLOT_LEGS, TotalArmourAttributes ); // Store the value in Slot
+                Console.WriteLine( "TotalArmourAttributes: " + TotalArmourAttributes );
+                }
+            TotalAttrributeCalculation();
+            }
         }
-
-    // defining base classes with individual combat values aso.
 
     public abstract class BaseAttributes
         {
@@ -348,6 +768,8 @@ namespace rpg_characters
 
         public double TotalAttributes { get; set; }
 
+        public double TotalArmourAttributes { get; set; }
+
         protected double DPS { get; set; }
 
         protected double HeadStrength { get; set; }
@@ -362,7 +784,7 @@ namespace rpg_characters
         public void showBaseStats()
             {
             StringBuilder sb = new StringBuilder("", 300);
-            sb.AppendLine( "Here are the base values of your character's (" + CharacterClass + ") base attributes:\n" );
+            sb.AppendLine( "\nHere are the (new) base values of your character's (" + CharacterClass + ") base attributes:\n" );
             sb.AppendLine( "Stength: " + BaseStrength );
             sb.AppendLine( "Dexterity: " + BaseDexterity );
             sb.AppendLine( "Intelligence: " + BaseIntelligence );
@@ -396,7 +818,7 @@ namespace rpg_characters
         public Enum ItemSlot { get; set; }
         public Enum TypeOfWeapon { get; set; }
 
-        public double Damage { get; set; }
+        public int Damage { get; set; }
         public double AttackSpeed { get; set; }
         }
 
@@ -408,6 +830,8 @@ namespace rpg_characters
         public Enum ArmourType { get; set; }
 
         public int Strength { get; set; }
+        public int Intelligence { get; set; }
+        public int Dexterity { get; set; }
         }
 
     public enum Slot
